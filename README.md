@@ -51,3 +51,6 @@ The app runs at `http://localhost:5173`.
 - [pako](https://github.com/nodeca/pako) for compressing plans into shareable URLs
 - [qrcode.react](https://github.com/zpao/qrcode.react) for QR generation
 - [lucide-react](https://lucide.dev/) for icons
+
+
+By Covington Software
