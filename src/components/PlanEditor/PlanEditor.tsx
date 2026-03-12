@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Download, Plus, QrCode, UtensilsCrossed, Upload } from 'lucide-react'
+import { Download, Plus, QrCode, Trash2, UtensilsCrossed, Upload } from 'lucide-react'
 import { useMealPlanStore, usePlan, today } from '../../store/useMealPlanStore'
 import { DishCard } from './DishCard'
 import { EmptyState } from '../shared/EmptyState'
@@ -10,7 +10,17 @@ import { samplePlan } from '../../data/samplePlan'
 
 export function PlanEditor() {
   const plan = usePlan()
-  const { createPlan, updatePlan, addDish, importPlan: loadPlan } = useMealPlanStore()
+  const { createPlan, updatePlan, addDish, importPlan: loadPlan, clearPlan } = useMealPlanStore()
+
+  const handleLoadSample = () => {
+    if (plan && !window.confirm('Loading the sample plan will overwrite your current meal plan. Continue?')) return
+    loadPlan({ ...samplePlan, date: today() })
+  }
+
+  const handleClearPlan = () => {
+    if (!window.confirm('Clear the entire meal plan? This cannot be undone.')) return
+    clearPlan()
+  }
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showQR, setShowQR] = useState(false)
 
@@ -50,7 +60,7 @@ export function PlanEditor() {
                 New Meal Plan
               </button>
               <button
-                onClick={() => loadPlan({ ...samplePlan, date: today() })}
+                onClick={handleLoadSample}
                 className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-lg font-medium hover:bg-orange-200 transition-colors cursor-pointer"
               >
                 <UtensilsCrossed size={16} />
@@ -119,6 +129,20 @@ export function PlanEditor() {
           >
             <QrCode size={14} />
             Share via QR
+          </button>
+          <button
+            onClick={handleLoadSample}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            <UtensilsCrossed size={14} />
+            Sample Plan
+          </button>
+          <button
+            onClick={handleClearPlan}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+          >
+            <Trash2 size={14} />
+            Clear Plan
           </button>
         </div>
       </div>

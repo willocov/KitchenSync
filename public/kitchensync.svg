@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Pan body -->
+  <ellipse cx="52" cy="62" rx="34" ry="28" fill="#f97316"/>
+  <!-- Pan interior -->
+  <ellipse cx="52" cy="60" rx="28" ry="22" fill="#fb923c"/>
+  <!-- Handle -->
+  <rect x="6" y="54" width="26" height="10" rx="5" fill="#ea580c"/>
+  <!-- Handle grip lines -->
+  <rect x="10" y="57" width="3" height="4" rx="1.5" fill="#c2410c"/>
+  <rect x="16" y="57" width="3" height="4" rx="1.5" fill="#c2410c"/>
+  <rect x="22" y="57" width="3" height="4" rx="1.5" fill="#c2410c"/>
+</svg>

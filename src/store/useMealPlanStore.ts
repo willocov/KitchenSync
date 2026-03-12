@@ -20,6 +20,7 @@ interface MealPlanStore {
   createPlan: (name: string, date: string) => void
   updatePlan: (updates: Partial<Pick<MealPlan, 'name' | 'date'>>) => void
   importPlan: (plan: MealPlan) => void
+  clearPlan: () => void
   addDish: () => void
   updateDish: (dishId: string, updates: Partial<Omit<Dish, 'id' | 'tasks'>>) => void
   removeDish: (dishId: string) => void
@@ -53,6 +54,8 @@ export const useMealPlanStore = create<MealPlanStore>()(
       },
 
       importPlan: (plan) => set({ plan, activeView: 'editor' }),
+
+      clearPlan: () => set({ plan: null }),
 
       addDish: () => {
         const { plan } = get()
