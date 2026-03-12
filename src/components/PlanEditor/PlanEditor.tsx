@@ -6,29 +6,24 @@ import { EmptyState } from '../shared/EmptyState'
 import { exportPlan, importPlan } from '../../utils/exportImport'
 import { buildShareUrl, checkShareUrlFitsQR } from '../../utils/shareUrl'
 import { QRModal } from '../shared/QRModal'
+import { ConfirmModal } from '../shared/ConfirmModal'
 import { samplePlan } from '../../data/samplePlan'
+
+type Dialog = 'loadSample' | 'clearPlan' | 'exportPlan' | null
 
 export function PlanEditor() {
   const plan = usePlan()
   const { createPlan, updatePlan, addDish, importPlan: loadPlan, clearPlan } = useMealPlanStore()
-
-  const handleLoadSample = () => {
-    if (plan && !window.confirm('Loading the sample plan will overwrite your current meal plan. Continue?')) return
-    loadPlan({ ...samplePlan, date: today() })
-  }
-
-  const handleClearPlan = () => {
-    if (!window.confirm('Clear the entire meal plan? This cannot be undone.')) return
-    clearPlan()
-  }
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showQR, setShowQR] = useState(false)
+  const [dialog, setDialog] = useState<Dialog>(null)
 
-  const handleExport = () => {
-    if (!plan) return
-    const name = window.prompt('Save recipe as:', plan.name)
-    if (name === null) return // user cancelled
-    exportPlan(plan, name || plan.name)
+  const handleLoadSample = () => {
+    if (plan) {
+      setDialog('loadSample')
+    } else {
+      loadPlan({ ...samplePlan, date: today() })
+    }
   }
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +48,7 @@ export function PlanEditor() {
           action={
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={() => createPlan('Thanksgiving Dinner', today())}
+                onClick={() => createPlan('Meal Plan Name', today())}
                 className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors cursor-pointer"
               >
                 <Plus size={16} />
@@ -68,7 +63,7 @@ export function PlanEditor() {
               </button>
               <label className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors cursor-pointer">
                 <Upload size={16} />
-                Import Recipe
+                Import Meal Plan
                 <input
                   type="file"
                   accept=".json"
@@ -106,7 +101,7 @@ export function PlanEditor() {
         </div>
         <div className="flex flex-wrap gap-2 mt-3">
           <button
-            onClick={handleExport}
+            onClick={() => setDialog('exportPlan')}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
           >
             <Download size={14} />
@@ -138,7 +133,7 @@ export function PlanEditor() {
             Sample Plan
           </button>
           <button
-            onClick={handleClearPlan}
+            onClick={() => setDialog('clearPlan')}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
           >
             <Trash2 size={14} />
@@ -147,12 +142,44 @@ export function PlanEditor() {
         </div>
       </div>
 
-      {showQR && plan && (
+      {showQR && (
         <QRModal
           url={buildShareUrl(plan)}
           planName={plan.name}
           fits={checkShareUrlFitsQR(plan)}
           onClose={() => setShowQR(false)}
+        />
+      )}
+
+      {dialog === 'loadSample' && (
+        <ConfirmModal
+          title="Load Sample Plan"
+          message="Loading the sample plan will overwrite your current meal plan. Continue?"
+          confirmLabel="Load Sample"
+          onConfirm={() => { setDialog(null); loadPlan({ ...samplePlan, date: today() }) }}
+          onCancel={() => setDialog(null)}
+        />
+      )}
+
+      {dialog === 'clearPlan' && (
+        <ConfirmModal
+          title="Clear Meal Plan"
+          message="Clear the entire meal plan? This cannot be undone."
+          confirmLabel="Clear Plan"
+          danger
+          onConfirm={() => { setDialog(null); clearPlan() }}
+          onCancel={() => setDialog(null)}
+        />
+      )}
+
+      {dialog === 'exportPlan' && (
+        <ConfirmModal
+          title="Export Recipe"
+          message="Save this recipe as:"
+          confirmLabel="Export"
+          inputDefault={plan.name}
+          onConfirm={(name) => { setDialog(null); exportPlan(plan, name || plan.name) }}
+          onCancel={() => setDialog(null)}
         />
       )}
 
