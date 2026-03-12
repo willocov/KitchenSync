@@ -6,6 +6,7 @@ import { EmptyState } from '../shared/EmptyState'
 import { exportPlan, importPlan } from '../../utils/exportImport'
 import { buildShareUrl, checkShareUrlFitsQR } from '../../utils/shareUrl'
 import { QRModal } from '../shared/QRModal'
+import { samplePlan } from '../../data/samplePlan'
 
 export function PlanEditor() {
   const plan = usePlan()
@@ -47,6 +48,13 @@ export function PlanEditor() {
               >
                 <Plus size={16} />
                 New Meal Plan
+              </button>
+              <button
+                onClick={() => loadPlan({ ...samplePlan, date: today() })}
+                className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-lg font-medium hover:bg-orange-200 transition-colors cursor-pointer"
+              >
+                <UtensilsCrossed size={16} />
+                Try Sample Plan
               </button>
               <label className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors cursor-pointer">
                 <Upload size={16} />
